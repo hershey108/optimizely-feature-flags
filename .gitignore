@@ -1,0 +1,10 @@
+.idea
+target/
+project/target
+.terraform
+.metals/
+.bloop/
+.bsp/
+project/metals.*
+.vscode/
+.bsp/
