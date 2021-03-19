@@ -1,6 +1,5 @@
 package com.kaluza.optimizelyfeatureflags
 
-object CustomResponse extends Feature {
-  val name: String = "greetings"
+object FeatureFlags {
+  val customResponse = Feature(name = "greetings")
 }
-

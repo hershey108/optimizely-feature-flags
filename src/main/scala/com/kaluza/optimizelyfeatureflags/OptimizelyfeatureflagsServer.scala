@@ -12,9 +12,13 @@ import scala.concurrent.ExecutionContext.global
 object OptimizelyfeatureflagsServer {
 
   def stream[F[_]: ConcurrentEffect](implicit T: Timer[F]): Stream[F, Nothing] = {
+    val sdkKey =
+      sys.env.getOrElse("OPTIMIZELY_SDK_KEY", throw new Exception("Where's OPTIMIZELY_SDK_KEY?"))
+
     for {
       client <- BlazeClientBuilder[F](global).stream
-      helloWorldAlg = HelloWorld.impl[F]
+      reader <- FeatureFlagReader(sdkKey)
+      helloWorldAlg = HelloWorld.impl[F](reader)
       jokeAlg = Jokes.impl[F](client)
 
       // Combine Service Routes into an HttpApp.

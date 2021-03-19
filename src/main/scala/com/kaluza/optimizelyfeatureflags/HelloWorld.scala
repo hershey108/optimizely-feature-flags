@@ -1,11 +1,11 @@
 package com.kaluza.optimizelyfeatureflags
 
 import cats.Applicative
+import cats.effect.Sync
 import cats.implicits._
 import io.circe.{Encoder, Json}
 import org.http4s.EntityEncoder
 import org.http4s.circe._
-import cats.effect.Sync
 
 trait HelloWorld[F[_]] {
   def hello(n: HelloWorld.Name): F[HelloWorld.Greeting]
@@ -33,11 +33,11 @@ object HelloWorld {
       jsonEncoderOf[F, Greeting]
   }
 
-  def impl[F[_]: Sync]: HelloWorld[F] =
+  def impl[F[_]: Sync](reader: FeatureFlagReader[F]): HelloWorld[F] =
     new HelloWorld[F] {
       def hello(n: HelloWorld.Name): F[HelloWorld.Greeting] = {
-        FeatureFlagReader
-          .readFlag(CustomResponse)
+        reader
+          .readFlag(FeatureFlags.customResponse)
           .ifM(Greeting("Hello, " + n.name).pure[F], Greeting("Hello, you").pure[F])
       }
     }
